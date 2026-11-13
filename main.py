@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import sys
@@ -14,6 +15,11 @@ def main():
     dst_size = os.path.getsize(dst)
     if src_size != dst_size:
         print(f"size mismatch: {src_size} != {dst_size}", file=sys.stderr)
+        return 1
+    src_hash = hashlib.file_digest(open(src, "rb"), "sha256").hexdigest()
+    dst_hash = hashlib.file_digest(open(dst, "rb"), "sha256").hexdigest()
+    if src_hash != dst_hash:
+        print(f"hash mismatch: {src_hash} != {dst_hash}", file=sys.stderr)
         return 1
     print(f"wrote {dst} ({dst_size} bytes)")
     return 0
